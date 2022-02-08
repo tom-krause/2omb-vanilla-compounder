@@ -1,8 +1,8 @@
- const TombAddress = "0x6c021Ae822BEa943b2E66552bDe1D2696a53fbB7";
- const TShareAddress = "0x4cdF39285D7Ca8eB3f090fDA0C069ba5F4145B37";
- const SpookyTombFtmLPAddress = "0x2A651563C9d3Af67aE0388a5c8F89b867038089e";
- const MasonryAddress = "0x8764DE60236C5843D9faEB1B638fbCE962773B67";
- const CemeteryAddress = "0xcc0a87F7e7c693042a9Cc703661F5060c80ACb43";
+ const TombAddress = "0x7a6e4E3CC2ac9924605DCa4bA31d1831c84b44aE"; //2omb
+ const TShareAddress = "0xc54A1684fD1bef1f077a336E6be4Bd9a3096a6Ca";
+ const SpookyTombFtmLPAddress = "0xbdC7DFb7B88183e87f003ca6B5a2F81202343478";
+ const MasonryAddress = "0x627A83B6f8743c89d58F17F994D3F7f69c32F461";
+ const CemeteryAddress = "0x773823982a6573b98805f21AD0c0d4F33C001584";
  const SpookyRouterAddress = "0xF491e7B69E4244ad4002BC14e878a34207E38c29";
 
 async function main() {
