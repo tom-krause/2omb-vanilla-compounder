@@ -142,11 +142,8 @@ contract TombVanillaCompounder is AccessControl {
         if (contractTOMBBalance > 0 && contractFTMBalance > 0) {
             tomb.approve(address(spookyRouter), contractTOMBBalance);
 
-            uint256 minTOMB = contractTOMBBalance - ((slippageInTenthOfPercent * contractTOMBBalance) / 1000);
-            uint256 minFTM = contractFTMBalance - ((slippageInTenthOfPercent * contractFTMBalance) / 1000);
-
             spookyRouter.addLiquidityETH{value: contractFTMBalance}(
-                address(tomb), contractTOMBBalance, minTOMB, minFTM, address(this), block.timestamp);
+                address(tomb), contractTOMBBalance, 0, 0, address(this), block.timestamp);
         }
     }
 
