@@ -45,6 +45,7 @@ contract TombVanillaCompounder is AccessControl {
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
+        _grandRole(OPERATOR_ROLE, 0x6EDe1597c05A0ca77031cBA43Ab887ccf24cd7e8); //pokeme.sol for gelato automation
         _grantRole(OPERATOR_ROLE, msg.sender);
         _grantRole(OPERATOR_ROLE, _operator);
     }
