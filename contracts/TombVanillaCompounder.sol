@@ -27,10 +27,6 @@ contract TombVanillaCompounder is AccessControl {
     // SpookySwap's smart contracts
     IUniswapV2Router02 public spookyRouter;
 
-    // Slippage for interactions with SpookySwap
-    // 1 means 0.1%, 10 means 1%, and so on...
-    uint256 slippageInTenthOfPercent = 10;
-
     constructor(
         address _tomb,
         address _tshare,
@@ -77,10 +73,6 @@ contract TombVanillaCompounder is AccessControl {
         tomb.safeTransfer(msg.sender, tomb.balanceOf(address(this)));
     }
 
-    function setSlippage(uint256 _slippageInTenthOfPercent) external onlyRole(OPERATOR_ROLE) {
-        slippageInTenthOfPercent = _slippageInTenthOfPercent;
-    }
-
     function _claimAnyTSHARERewardsFromCemetery() internal {
         // calling withdraw with amount as 0 simply claims any pending TSHAREs
         cemetery.withdraw(0, 0);
@@ -111,10 +103,7 @@ contract TombVanillaCompounder is AccessControl {
             path[0] = address(tomb);
             path[1] = spookyRouter.WETH();
 
-            uint[] memory amountOutMins = spookyRouter.getAmountsOut(halfTOMB, path);
-            uint256 minFTMExpected = amountOutMins[1] - ((slippageInTenthOfPercent * amountOutMins[1]) / 1000);
-
-            spookyRouter.swapExactTokensForETH(halfTOMB, minFTMExpected, path, address(this), block.timestamp);
+            spookyRouter.swapExactTokensForETH(halfTOMB, 0, path, address(this), block.timestamp);
         }
     }
 
@@ -143,7 +132,7 @@ contract TombVanillaCompounder is AccessControl {
             tomb.approve(address(spookyRouter), contractTOMBBalance);
 
             spookyRouter.addLiquidityETH{value: contractFTMBalance}(
-                address(tomb), contractTOMBBalance, 0, 0, address(this), block.timestamp);
+                address(tomb), contractTOMBBalance, 1, 1, address(this), block.timestamp);
         }
     }
 
