@@ -4,7 +4,7 @@
 - General smart contract programming using Solidity and hardhat
 - Tomb's Cemetery and Masonry contracts to understand our interactions with them
 - ethers for scripts to test, deploy, and harvest (javascript)
-- (Bonus) AWS Lambda to be able to automate harvesting every 18 hours
+- (Bonus) ~~AWS Lambda to be able to automate harvesting every 18 hours~~ Use Gelato tasks to automate harvesting every 6hrs
 
 ### "Simple" solo-use smart contract to automate the "tomb-loop":
 1. Claim TSHARE rewards from Cemetery
