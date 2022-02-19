@@ -6,12 +6,13 @@
 - ethers for scripts to test, deploy, and harvest (javascript)
 - (Bonus) AWS Lambda to be able to automate harvesting every 18 hours
 
-### Simple solo-use smart contract to automate the "tomb-loop":
+### "Simple" solo-use smart contract to automate the "tomb-loop":
 1. Claim TSHARE rewards from Cemetery
 2. Claim TOMB rewards from Masonry
 3. Deposit TSHARE rewards into Masonry
-4. Swap half of the TOMB rewards for FTM, and convert into Spooky FTM-TOMB LP tokens
-5. Deposit LP tokens into Cemetery
+4. Take profit from TOMB rewards for WFTM, profit percentage is adjustable default set at 10%
+5. Swap half of the TOMB rewards for FTM, and convert into Spooky FTM-TOMB LP tokens
+6. Deposit LP tokens into Cemetery
 
 ### Key Solidity files
 
