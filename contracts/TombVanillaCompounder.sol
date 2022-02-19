@@ -107,6 +107,24 @@ contract TombVanillaCompounder is AccessControl {
             spookyRouter.swapExactTokensForETH(halfTOMB, 0, path, address(this), block.timestamp);
         }
     }
+    
+    // Adds liquidity to AMM and gets more LP tokens.
+    function addLiquidity() internal {
+        uint256 outputHalf = tomb.balanceOf(address(this)).div(2);
+        if (contractTOMBBalance > 0) {
+            tomb.approve(address(spookyRouter), halfTOMB);
+
+            address[] memory path = new address[](2);
+            path[0] = address(tomb);
+            path[1] = spookyRouter.WETH();
+
+            spookyRouter.swapExactTokensForETH(halfTOMB, 0, path, address(this), block.timestamp);
+        }
+        uint256 contractTOMBBalance = tomb.balanceOf(address(this));
+        uint256 contractFTMBalance = address(this).balance;
+        tomb.approve(address(spookyRouter), contractTOMBBalance);
+        spookyRouter.addLiquidityETH{value: contractFTMBalance}(address(tomb), contractTOMBBalance, 1, 1, address(this), block.timestamp);
+    }
 
     function _swapHalfToken1ForToken2(IERC20 _token1, IERC20 _token2) internal {
         uint256 contractToken1Balance = _token1.balanceOf(address(this));
@@ -129,12 +147,9 @@ contract TombVanillaCompounder is AccessControl {
         uint256 contractTOMBBalance = tomb.balanceOf(address(this));
         uint256 contractFTMBalance = address(this).balance;
 
-        if (contractTOMBBalance > 0 && contractFTMBalance > 0) {
-            tomb.approve(address(spookyRouter), contractTOMBBalance);
+        tomb.approve(address(spookyRouter), contractTOMBBalance);
 
-            spookyRouter.addLiquidityETH{value: contractFTMBalance}(
-                address(tomb), contractTOMBBalance, 1, 1, address(this), block.timestamp);
-        }
+        spookyRouter.addLiquidityETH{value: contractFTMBalance}(address(tomb), contractTOMBBalance, 1, 1, address(this), block.timestamp);
     }
 
     function _depositAnyLPIntoCemetery() internal {
