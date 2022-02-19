@@ -4,6 +4,8 @@
  const MasonryAddress = "0x627A83B6f8743c89d58F17F994D3F7f69c32F461"; //boardroom 2omb reward
  const CemeteryAddress = "0x8D426Eb8C7E19b8F13817b07C0AB55d30d209A96"; //2share reward pool "farms"
  const SpookyRouterAddress = "0xF491e7B69E4244ad4002BC14e878a34207E38c29";
+ const Operator = "0x6EDe1597c05A0ca77031cBA43Ab887ccf24cd7e8";
+ const Profit = "";
 
 async function main() {
   const [deployer] = await ethers.getSigners();
