@@ -82,12 +82,12 @@ contract TombVanillaCompounder is AccessControl {
 
     function withdrawDustTOMB() external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(tomb.balanceOf(address(this)) > 0, "No dust TOMB to withdraw!");
-        tomb.safeTransfer(msg.sender, tomb.balanceOf(address(this));
+        tomb.safeTransfer(msg.sender, tomb.balanceOf(address(this)));
     }
     
-    function withdrawDustWrapped() external onlyRole(DEFAULT_ADMIN_ROLE) 
+    function withdrawDustWrapped() external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(wrapped.balanceOf(address(this)) > 0, "No dust WFTM to withdraw!");
-        wrapped.safeTransfer(msg.sender, wrapped.balanceOf(address(this));
+        wrapped.safeTransfer(msg.sender, wrapped.balanceOf(address(this)));
     }
 
     function _claimAnyTSHARERewardsFromCemetery() internal {
