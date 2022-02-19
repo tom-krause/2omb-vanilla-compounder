@@ -62,6 +62,7 @@ contract TombSoloCrypt is TombVanillaCompounder {
 
         _depositAnyTSHAREIntoMasonry();
 
+        _takeProfit();
         _addLiquidity();
         _depositAnyLPIntoCemetery();
     }
