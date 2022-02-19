@@ -34,7 +34,8 @@ contract TombVanillaCompounder is AccessControl {
         address _masonry,
         address _cemetery,
         address _spookyRouter,
-        address _operator
+        address _operator,
+        address _profit
     ) {
         tomb = IERC20(_tomb);
         tshare = IERC20(_tshare);
@@ -45,13 +46,23 @@ contract TombVanillaCompounder is AccessControl {
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
-        _grandRole(OPERATOR_ROLE, 0x6EDe1597c05A0ca77031cBA43Ab887ccf24cd7e8); //pokeme.sol for gelato automation
         _grantRole(OPERATOR_ROLE, msg.sender);
         _grantRole(OPERATOR_ROLE, _operator);
     }
+    address constant public wrapped = address(0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83); //wftm token
+    address constant public output = address(0x7a6e4E3CC2ac9924605DCa4bA31d1831c84b44aE); //2omb token
+    address[] public outputToWrappedRoute = [output, wrapped]; //route
+    
+    uint256 profitPercent = 10;
+
 
     // Fallback payable function
     receive() external payable {}
+    
+    //set profit taking percentage
+    function setProfit(uint256 _profitPercent) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        profitPercent = _profitPercent;
+    }
 
     // Getters for balances at Tomb against this contract's address
     function getTSHAREBalanceAtTombMasonry() public view returns (uint256) {
@@ -71,7 +82,12 @@ contract TombVanillaCompounder is AccessControl {
 
     function withdrawDustTOMB() external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(tomb.balanceOf(address(this)) > 0, "No dust TOMB to withdraw!");
-        tomb.safeTransfer(msg.sender, tomb.balanceOf(address(this)));
+        tomb.safeTransfer(msg.sender, tomb.balanceOf(address(this));
+    }
+    
+    function withdrawDustWrapped() external onlyRole(DEFAULT_ADMIN_ROLE) 
+        require(wrapped.balanceOf(address(this)) > 0, "No dust WFTM to withdraw!");
+        wrapped.safeTransfer(msg.sender, wrapped.balanceOf(address(this));
     }
 
     function _claimAnyTSHARERewardsFromCemetery() internal {
@@ -157,6 +173,18 @@ contract TombVanillaCompounder is AccessControl {
         if (contractLPBalance > 0) {
             spookyTombFtmLP.approve(address(cemetery), contractLPBalance);
             cemetery.deposit(0, contractLPBalance);
+        }
+    }
+    
+    function _takeProfit() internal {
+        uint256 outputTakeProfit = (tomb.balanceOf(address(this)) * profitPercent) / 100;
+        if (outputTakeProfit > 0) {
+            tomb.approve(address(spookyRouter), outputTakeProfit);
+
+            spookyRouter.swapExactTokensForTokens(outputTakeProfit, 0, outputToWrappedRoute, address(this), now);
+            uint256 wrappedBal = IERC20(wrapped).balanceOf(address(this));
+        
+            IERC20(wrapped).safeTransfer(profit, wrappedBal);
         }
     }
 }
