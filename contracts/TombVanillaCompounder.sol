@@ -27,6 +27,8 @@ contract TombVanillaCompounder is AccessControl {
     // SpookySwap's smart contracts
     IUniswapV2Router02 public spookyRouter;
 
+    address public profit;
+
     constructor(
         address _tomb,
         address _tshare,
@@ -43,6 +45,7 @@ contract TombVanillaCompounder is AccessControl {
         masonry = IMasonry(_masonry);
         cemetery = ITShareRewardPool(_cemetery);
         spookyRouter = IUniswapV2Router02(_spookyRouter);
+        profit = _profit;
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
@@ -86,8 +89,8 @@ contract TombVanillaCompounder is AccessControl {
     }
     
     function withdrawDustWrapped() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(wrapped.balanceOf(address(this)) > 0, "No dust WFTM to withdraw!");
-        wrapped.safeTransfer(msg.sender, wrapped.balanceOf(address(this)));
+        require(IERC20(wrapped).balanceOf(address(this)) > 0, "No dust WFTM to withdraw!");
+        IERC20(wrapped).safeTransfer(msg.sender, IERC20(wrapped).balanceOf(address(this)));
     }
 
     function _claimAnyTSHARERewardsFromCemetery() internal {
@@ -126,8 +129,9 @@ contract TombVanillaCompounder is AccessControl {
     
     // Adds liquidity to AMM and gets more LP tokens.
     function _addLiquidity() internal {
-        uint256 outputHalf = tomb.balanceOf(address(this)).div(2);
+        uint256 contractTOMBBalance = tomb.balanceOf(address(this));
         if (contractTOMBBalance > 0) {
+            uint256 halfTOMB = tomb.balanceOf(address(this)) / 2;
             tomb.approve(address(spookyRouter), halfTOMB);
 
             address[] memory path = new address[](2);
@@ -136,30 +140,13 @@ contract TombVanillaCompounder is AccessControl {
 
             spookyRouter.swapExactTokensForETH(halfTOMB, 0, path, address(this), block.timestamp);
             
-            uint256 contractTOMBBalance = tomb.balanceOf(address(this));
+            uint256 TOMBBalance = tomb.balanceOf(address(this));
             uint256 contractFTMBalance = address(this).balance;
         
-            tomb.approve(address(spookyRouter), contractTOMBBalance);
+            tomb.approve(address(spookyRouter), TOMBBalance);
         
-            spookyRouter.addLiquidityETH{value: contractFTMBalance}(address(tomb), contractTOMBBalance, 1, 1, address(this), block.timestamp);
+            spookyRouter.addLiquidityETH{value: contractFTMBalance}(address(tomb), TOMBBalance, 1, 1, address(this), block.timestamp);
         
-        }
-    }
-
-    function _swapHalfToken1ForToken2(IERC20 _token1, IERC20 _token2) internal {
-        uint256 contractToken1Balance = _token1.balanceOf(address(this));
-        if (contractToken1Balance > 0) {
-            uint256 halfToken1 = contractToken1Balance / 2;
-            _token1.approve(address(spookyRouter), halfToken1);
-
-            address[] memory path = new address[](2);
-            path[0] = address(_token1);
-            path[1] = address(_token2);
-
-            uint[] memory amountOutMins = spookyRouter.getAmountsOut(halfToken1, path);
-            uint256 minToken2Expected = amountOutMins[1] - ((slippageInTenthOfPercent * amountOutMins[1]) / 1000);
-
-            spookyRouter.swapExactTokensForTokens(halfToken1, minToken2Expected, path, address(this), block.timestamp);
         }
     }
 
@@ -185,7 +172,7 @@ contract TombVanillaCompounder is AccessControl {
         if (outputTakeProfit > 0) {
             tomb.approve(address(spookyRouter), outputTakeProfit);
 
-            spookyRouter.swapExactTokensForTokens(outputTakeProfit, 0, outputToWrappedRoute, address(this), now);
+            spookyRouter.swapExactTokensForTokens(outputTakeProfit, 0, outputToWrappedRoute, address(this), block.timestamp);
             uint256 wrappedBal = IERC20(wrapped).balanceOf(address(this));
         
             IERC20(wrapped).safeTransfer(profit, wrappedBal);
