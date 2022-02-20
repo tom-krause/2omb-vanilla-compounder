@@ -25,5 +25,5 @@
 - `deploy.js` to deploy to your network of choosing (configure networks in `hardhat.config.js`)
 ~~- `index.js` in the `harvester/` folder to invoke `runRoutine()` (the `harvester/` folder is written with an AWS Lambda setup in mind)~~
 
-~~**You need to add a .env file that contains two variables, `DEPLOYER_PRIVATE_KEY`(without the leading `0x`) and `FTMSCAN_API_KEY`, for the project to build.**
+~~You need to add a .env file that contains two variables, `DEPLOYER_PRIVATE_KEY`(without the leading `0x`) and `FTMSCAN_API_KEY`, for the project to build.**
 ~~
