@@ -14,7 +14,8 @@ contract TombSoloCrypt is TombVanillaCompounder {
         address _masonry,
         address _cemetery,
         address _spookyRouter,
-        address _operator
+        address _operator,
+        address _profit
     ) TombVanillaCompounder(
         _tomb,
         _tshare,
@@ -22,7 +23,8 @@ contract TombSoloCrypt is TombVanillaCompounder {
         _masonry,
         _cemetery,
         _spookyRouter,
-        _operator
+        _operator,
+        _profit
     ) { }
 
     // Deposit LPs into this contract, which then get deposited into Tomb's Cemetery
